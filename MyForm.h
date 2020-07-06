@@ -62,6 +62,8 @@ namespace Mystring {
 
 
 	private: System::Windows::Forms::GroupBox^ groupBox3;
+	private: System::Windows::Forms::StatusStrip^ statusStrip1;
+	private: System::Windows::Forms::ToolStripStatusLabel^ toolStripStatusLabel1;
 
 	private:
 		/// <summary>
@@ -97,9 +99,12 @@ namespace Mystring {
 			this->One = (gcnew System::Windows::Forms::TextBox());
 			this->Two = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
+			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->groupBox3->SuspendLayout();
+			this->statusStrip1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// textBox1
@@ -138,6 +143,7 @@ namespace Mystring {
 			// 
 			// groupBox1
 			// 
+			this->groupBox1->BackColor = System::Drawing::Color::PapayaWhip;
 			this->groupBox1->Controls->Add(this->textBox3);
 			this->groupBox1->Controls->Add(this->textBox4);
 			this->groupBox1->Controls->Add(this->label3);
@@ -217,6 +223,7 @@ namespace Mystring {
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->BackColor = System::Drawing::Color::Moccasin;
 			this->groupBox2->Controls->Add(this->richTextBox2);
 			this->groupBox2->Controls->Add(this->richTextBox1);
 			this->groupBox2->Controls->Add(this->button1);
@@ -253,7 +260,7 @@ namespace Mystring {
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(347, 27);
 			this->button1->TabIndex = 9;
-			this->button1->Text = L"Взять текст из файла и преобразовать";
+			this->button1->Text = L"Преобразовать текст";
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
 			// 
@@ -291,6 +298,7 @@ namespace Mystring {
 			// 
 			// groupBox3
 			// 
+			this->groupBox3->BackColor = System::Drawing::Color::Moccasin;
 			this->groupBox3->Controls->Add(this->Two);
 			this->groupBox3->Controls->Add(this->One);
 			this->groupBox3->Controls->Add(this->label9);
@@ -302,23 +310,46 @@ namespace Mystring {
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Задача№2.3";
 			// 
+			// statusStrip1
+			// 
+			this->statusStrip1->ImageScalingSize = System::Drawing::Size(20, 20);
+			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->toolStripStatusLabel1 });
+			this->statusStrip1->Location = System::Drawing::Point(0, 439);
+			this->statusStrip1->Name = L"statusStrip1";
+			this->statusStrip1->Size = System::Drawing::Size(861, 26);
+			this->statusStrip1->TabIndex = 15;
+			this->statusStrip1->Text = L"statusStrip1";
+			// 
+			// toolStripStatusLabel1
+			// 
+			this->toolStripStatusLabel1->Name = L"toolStripStatusLabel1";
+			this->toolStripStatusLabel1->Size = System::Drawing::Size(133, 20);
+			this->toolStripStatusLabel1->Text = L"Строка состояния";
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(861, 501);
+			this->BackColor = System::Drawing::Color::LemonChiffon;
+			this->ClientSize = System::Drawing::Size(861, 465);
+			this->Controls->Add(this->statusStrip1);
 			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->groupBox1);
 			this->Name = L"MyForm";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"MyForm";
+			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
 			this->groupBox2->ResumeLayout(false);
 			this->groupBox2->PerformLayout();
 			this->groupBox3->ResumeLayout(false);
 			this->groupBox3->PerformLayout();
+			this->statusStrip1->ResumeLayout(false);
+			this->statusStrip1->PerformLayout();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -335,7 +366,39 @@ namespace Mystring {
 
 private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) 
 {
+	if (this->One->Text != "" || this->Two->Text != "")
+	{
+		//Обновление текста
+		this->richTextBox1->Text = "";
+		//Вывод текста из файла
+		String^ File_Name;
+		File_Name = Directory::GetCurrentDirectory() + "//Текст.txt";
+		StreamReader^ My_SR = File::OpenText(File_Name);
+		String^ My_Str = My_SR->ReadToEnd();
 
+		//Вывод в richTextBox1
+		this->richTextBox1->Text = My_Str;
+
+		String^ Texts = gcnew String("");
+		Texts = My_Str;
+		String^ One = gcnew String(this->One->Text);
+		String^ Two = gcnew String(this->Two->Text);
+		String^ New = My_Str->Replace(One, Two);
+		this->richTextBox2->Text = New;
+
+		//Вывод в файл
+		String^ File_Name1;
+		// Имя файла - TextFile_new, создается в текущем директории.
+		File_Name1 = gcnew String(Directory::GetCurrentDirectory() + "//Текст1.txt");
+		StreamWriter^ My_SW = gcnew StreamWriter(File_Name1); // Запись всего текста.
+		My_SW->Write(Texts); // Поток закрыть.
+		My_SW->Close();
+		toolStripStatusLabel1->Text = "Слово заменено и загружено в файл";
+	}
+	else
+		toolStripStatusLabel1->Text = "Заполните данные об удалении слова";
+}
+private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
 	//Обновление текста
 	this->richTextBox1->Text = "";
 	//Вывод текста из файла
@@ -343,24 +406,8 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 	File_Name = Directory::GetCurrentDirectory() + "//Текст.txt";
 	StreamReader^ My_SR = File::OpenText(File_Name);
 	String^ My_Str = My_SR->ReadToEnd();
-
-	//Вывод в richTextBox1
 	this->richTextBox1->Text = My_Str;
-
-	String^ Texts = gcnew String("");
-	Texts = My_Str;
-	String^ One = gcnew String(this->One->Text);
-	String^ Two = gcnew String(this->Two->Text);
-	String^ New = My_Str->Replace(One, Two);
-	this->richTextBox2->Text = New;
-
-	//Вывод в файл
-	String^ File_Name1;
-	// Имя файла - TextFile_new, создается в текущем директории.
-	File_Name1 = gcnew String(Directory::GetCurrentDirectory()+ "//Текст1.txt");
-	StreamWriter^ My_SW = gcnew StreamWriter(File_Name1); // Запись всего текста.
-	My_SW->Write(Texts); // Поток закрыть.
-	My_SW->Close();
+	toolStripStatusLabel1->Text = "Программа запущена";
 }
 };
 }
